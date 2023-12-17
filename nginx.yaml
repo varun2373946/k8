@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: webapp
+  template:
+    metadata:
+      labels:
+        name: webapp
+    spec:
+      containers:
+      - name: app-container
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+          protocol: TCP
+      tolerations:
+        - key: "project"
+          value: "nginx1"
+          operator: "Equal"
+          effect: "NoSchedule"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: myappsvc
+spec:
+  type: NodePort
+  selector:
+    name: webapp
+  ports:
+    - nodePort: 30002
+      port: 80
+      targetPort: 80
+
+
